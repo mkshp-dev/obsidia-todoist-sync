@@ -548,6 +548,9 @@ export class SyncEngine {
 
 		if (!existingNote) {
 			// NEW: Create file for new Todoist task
+			if (task.content.toLowerCase().includes('calendar')) {
+				console.debug(`******(contains 'calendar'): ${task.content}`);
+			}
 			console.debug(`Creating new task file: ${task.content}`);
 			const taskNote = await this.fileGenerator.createOrUpdateTaskNote(task, projectName, sectionName);
 			this.obsidianState.setTaskNote(task.id, taskNote);

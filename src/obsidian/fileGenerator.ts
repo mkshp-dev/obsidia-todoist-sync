@@ -344,22 +344,51 @@ export class FileGenerator {
 	 */
 	private serializeFrontmatter(frontmatter: any): string {
 		let yaml = '---\n';
-		
+
 		for (const [key, value] of Object.entries(frontmatter)) {
-			if (value !== undefined && value !== null) {
-				if (Array.isArray(value)) {
-					yaml += `${key}:\n`;
-					for (const item of value) {
-						yaml += `  - ${item}\n`;
-					}
-				} else if (typeof value === 'string' && value.includes(':')) {
-					yaml += `${key}: "${value}"\n`;
-				} else {
-					yaml += `${key}: ${value}\n`;
+			if (value === undefined || value === null) continue;
+
+			// Arrays
+			if (Array.isArray(value)) {
+				yaml += `${key}:\n`;
+				for (const item of value) {
+					yaml += `  - ${item}\n`;
 				}
+				continue;
 			}
+
+			// Multi-line strings -> YAML block scalar
+			if (typeof value === 'string' && value.includes('\n')) {
+				const normalized = value.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n+$/, '');
+				const lines = normalized.split('\n');
+				yaml += `${key}: |\n`;
+				for (const line of lines) {
+					yaml += `  ${line}\n`;
+				}
+				continue;
+			}
+
+			// Single-line string: treat literal booleans as booleans, otherwise always quote
+			if (typeof value === 'string') {
+				if (value === 'true') {
+					yaml += `${key}: true\n`;
+					continue;
+				}
+				if (value === 'false') {
+					yaml += `${key}: false\n`;
+					continue;
+				}
+
+				// Otherwise always quote single-line strings (escape internal quotes)
+				const escaped = value.replace(/"/g, '\\"');
+				yaml += `${key}: "${escaped}"\n`;
+				continue;
+			}
+
+			// Other primitive types (number, boolean)
+			yaml += `${key}: ${value}\n`;
 		}
-		
+
 		yaml += '---';
 		return yaml;
 	}
@@ -386,7 +415,7 @@ export class FileGenerator {
 	 */
 	private sanitizeFileName(name: string): string {
 		// Debug: log input to sanitizer
-		Logger.getInstance().debug('[FileGenerator] sanitizeFileName input: ' + name);
+		// Logger.getInstance().debug('[FileGenerator] sanitizeFileName input: ' + name);
 		// Convert markdown links like [display text](url) -> display text
 		let v = name.replace(/\[([^\]]+)\]\((.*?)\)/g, '$1');
 
@@ -408,7 +437,7 @@ export class FileGenerator {
 			return 'untitled';
 		}
 
-		Logger.getInstance().debug('[FileGenerator] sanitizeFileName output: ' + v);
+		// Logger.getInstance().debug('[FileGenerator] sanitizeFileName output: ' + v);
 		return v;
 	}
 }
