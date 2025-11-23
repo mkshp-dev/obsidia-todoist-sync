@@ -1,0 +1,18 @@
+{
+  "todoistApiToken": "515d0dda74a397d9aa153165d4e4f50e23681e28",
+  "syncFolderPath": "TodoistSync",
+  "scopeTag": "todoist",
+  "autoSyncInterval": 300,
+  "debugMode": true,
+  "dryRunMode": false,
+  "realTimeSyncEnabled": false,
+  "autoSyncEnabled": false,
+  "enabledProperties": {
+    "content": true,
+    "dueDate": true,
+    "priority": true,
+    "labels": true,
+    "project": true,
+    "section": true
+  }
+}

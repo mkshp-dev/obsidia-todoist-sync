@@ -1,0 +1,11 @@
+{
+	"id": "obsidian-todoist-sync",
+	"name": "Todoist Sync",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Bidirectional sync between Obsidian notes and Todoist tasks, projects, and sections. Each task becomes a note with YAML properties.",
+	"author": "Plugin Developer",
+	"authorUrl": "",
+	"fundingUrl": "",
+	"isDesktopOnly": false
+}
